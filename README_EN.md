@@ -1,76 +1,69 @@
 ![tidevice](assets/tidevice-logo.png)
-## tidevice
+# tidevice
 
 [![PyPI](https://img.shields.io/pypi/v/tidevice)](https://pypi.org/project/tidevice/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/tidevice)](https://pypistats.org/search/tidevice)
 
-[English](README_EN.md)
+[中文文档](README.md)
 
-QQ交流群: _134535547_  (进群答案: 自己猜吧，不行就问gpt)
+Command line tool to communicate with iOS device, support the following functions
 
-该工具能够用于与iOS设备进行通信, 提供以下功能
+- screenshot
+- get device info
+- ipa install and uninstall
+- launch and kill app
+- list installed app info
+- retrieve performance data
+- retrieve energy data
+- simulate run xctest, eg: WebDriverAgent
+- file operation
+- crash log operation
+- other
 
-- 截图
-- 获取手机信息
-- ipa包的安装和卸载
-- 根据bundleID 启动和停止应用
-- 列出安装应用信息
-- 模拟Xcode运行XCTest，常用的如启动WebDriverAgent测试（此方法不依赖xcodebuild)
-- 获取指定应用性能(CPU,MEM,FPS)
-- 获取指定应用功耗(CPU,GPU,network,display,location)
-- 文件操作
-- Crash日志操作
-- 其他
+Support platform: Mac, Linux, Windows
 
-支持运行在Mac，Linux，Windows上
-
-## 赞助商
-[![霍格沃兹测试开发学社](https://testing-studio.com/img/icon.png)](https://qrcode.testing-studio.com/f?from=tidevice&url=https://testing-studio.com/)
-
-霍格沃兹测试开发学社：中国软件测试开发高端教育品牌，产品由国内顶尖软件测试开发技术专家携手打造。为企业与个人提供专业的技能培训与咨询、测试工具与测试平台、测试外包与测试众包服务。领域涵盖App/Web自动化测试、接口自动化测试、性能测试、安全测试、持续交付/DevOps、测试左移、测试右移、精准测试、测试平台开发、测试管理等方向，[**联系我们**](https://qrcode.testing-studio.com/f?from=tidevice&url=https://ceshiren.com/t/topic/23806)
-
-
-## 安装
-
+## Install
 Python 3.6+
 
 ```bash
 pip3 install -U "tidevice[openssl]"   # Recommend
 ```
 
-如果上面的命令提示安装失败，就试试下面的命令。（不过这种方法安装，配对功能就没有了，因为没有办法进行签名）
+The extra *openssl*, contains device pair support. If can install it, try
 
 ```bash
 pip3 install -U tidevice
 ```
 
-> Windows电脑需要安装并启动Itunes
+> Windows need to install and launch iTunes
 
-## 使用
+## Usage
 
-> 使用--trace选项可以查看socket数据流
+Use `--trace` can open socket log. For example: `tidevice --trace info`
 
-### 手机配置
-iOS 16的手机需要手工开启开发者选项。
-开启方法：设置->隐私与安全性->开发者模式 （打开），然后会提示重启 （点击 重新启动） -> 启动后会弹窗 是否打开“开发者模式”？（点击打开）
+### iOS Setting
+iOS 16 need to Open Developer mode Manualy
 
+How to open
 
-### 查看版本号
+Settings -> Privacy & Security -> Developer Mode -> (Turn switch ON) -> (Click "Restart") -> (Click "Turn On" when Dialog appears)
+
+### Show version number
 ```bash
 $ tidevice version
 0.1.0
 ```
 
-### 配对
+### Pair
 ```bash
 $ tidevice pair
-# 配对设备
+# pair device
 
 $ tidevice unpair
-# 取消配对设备
+# unpair device
 ```
 
-### 列出连接设备
+### List connected devices
 ```bash
 $ tidevice list
 List of apple devices attached
@@ -85,37 +78,32 @@ $ tidevice list --json
 ]
 ```
 
-### 应用管理
+### App management
 ```bash
-# 安装应用
 $ tidevice install example.ipa
 
-# 指定设备安装
+# Specify device udid to install
 $ tidevice --udid $UDID install https://example.org/example.ipa
 
-# 卸载应用
 $ tidevice uninstall com.example.demo
 
-# 启动应用
 $ tidevice launch com.example.demo
 
-# 停止应用
 $ tidevice kill com.example.demo
 
-# 查看已安装应用
+# show installed app list
 $ tidevice applist
 
-# 查看运行中的应用
+# show running app list
 $ tidevice ps
 $ tidevice ps --json output as json
 ```
 
 ### Run XCTest
-> 请先确保手机上已经安装有[WebDriverAgent](https://github.com/appium/WebDriverAgent)应用
+> Please make sure your iPhone already have [WebDriverAgent](https://github.com/appium/WebDriverAgent) installed
 
 ```bash
-# 运行XCTEST
-$ tidevice xcuitest -B com.facebook.wda.WebDriverAgent.Runner
+$ tidevice xctest -B com.facebook.wda.WebDriverAgent.Runner
 [I 210127 11:40:23 _device:909] BundleID: com.facebook.wda.WebDriverAgent.Runner
 [I 210127 11:40:23 _device:911] DeviceIdentifier: 12345678901234567890abcdefg
 [I 210127 11:40:23 _device:773] SignIdentity: 'Apple Development: -Your-Developer-Name-'
@@ -124,26 +112,21 @@ $ tidevice xcuitest -B com.facebook.wda.WebDriverAgent.Runner
 [I 210127 11:40:24 _device:952] Start execute test plan with IDE version: 29
 [I 210127 11:40:24 _device:875] WebDriverAgent start successfully
 
-# 修改监听端口为8200, 并显示调试日志
-$ tidevice xcuitest -B com.facebook.wda.WebDriverAgent.Runner -e USE_PORT:8200 --debug
+# Change WDA listen port to 8200 and show debug log
+$ tidevice xctest -B com.facebook.wda.WebDriverAgent.Runner -e USE_PORT:8200 --debug
 ```
 
 ### Relay
 ```
-# 转发请求到手机，类似于iproxy
+# proxy local tcp request to phone, alternative: iproxy
 $ tidevice relay 8100 8100
 
-# 转发并把传输的内容用hexdump的方法print出来
+# relay and show traffic data with hexdump
 $ tidevice relay -x 8100 8100
 ```
 
-### 运行WebDriverAgent
-目前已知的几个问题
-
-- 不支持运行企业证书签名的WDA
-- 数据线可能导致wda连接中断。作者用的数据线(推荐): <https://item.jd.com/44473991638.html>
-
-wdaproxy这个命令会同时调用xctest和relay，另外当wda退出时，会自动重新启动xctest
+### Run WebDriverAgent
+command:`wdaproxy` invoke `xctest` and `relay`, with watchers to keep xctest always running
 
 ```bash
 # 运行 XCTest 并在PC上监听8200端口转发到手机8100服务
@@ -151,7 +134,7 @@ $ tidevice wdaproxy -B com.facebook.wda.WebDriverAgent.Runner --port 8200
 ...logs...
 ```
 
-启动后你就可以使用Appium 或者 [facebook-wda](https://github.com/openatx/facebook-wda) 来运行iOS自动化了
+Then you can connect with Appium or [facebook-wda](https://github.com/openatx/facebook-wda)
 
 *facebook-wda example code*
 
@@ -161,27 +144,15 @@ c = wda.Client("http://localhost:8200")
 print(c.info)
 ```
 
-*Appium* 需要下面几个配置需要设置一下
-```
-"usePrebuiltWDA": "false",
-"useXctestrunFile": "false",
-"skipLogCapture": "true"
-```
+### Run UITests
+Demo <https://github.com/FeiHuang93/XCTest-Demo>
 
-需要在Windows上运行Appium+iOS自动化可以参考下面的帖子 <https://testerhome.com/topics/29230>
-Ref issue [#46](https://github.com/alibaba/taobao-iphone-device/issues/46)
-
-### 运行XCTest UITest
-这个不是Unit Tests，而是UITests。具体可以看这里的解释说明 <https://fbidb.io/docs/test-execution>
-
-以这个项目为例: https://github.com/FeiHuang93/XCTest-Demo
-应用分为执行测试的应用 testXCTestUITests 和 被测应用 testXCTest
-
-执行方法
-
-```bash
+- `philhuang.testXCTestUITests.xctrunner` is the test to launch
+- `philhuang.testXCTest` is the app to test
+ 
+ ```bash
 $ tidevice xcuitest --bundle-id philhuang.testXCTestUITests.xctrunner --target-bundle-id philhuang.testXCTest
-# ... 省略一部分不重要的信息 ...
+# ... ignore some not important part ...
 [I 210301 15:37:07 _device:887] logProcess: 2021-03-01 15:37:07.924620+0800 testXCTestUITests-Runner[81644:13765443] Running tests...
 [I 210301 15:37:07 _device:984] Test runner ready detected
 [I 210301 15:37:07 _device:976] Start execute test plan with IDE version: 29
@@ -216,27 +187,25 @@ $ tidevice xcuitest --bundle-id philhuang.testXCTestUITests.xctrunner --target-b
 [I 210301 15:37:09 _device:1059] xctrunner quited
 ```
 
-### 挂载开发者镜像
-这个步骤其实不太需要，因为如果tidevice的命令需要开发者镜像的时候，会自动去挂载的
-
+### Mount DeveloperDiskImage
 ```bash
-# 先在本地路径查找 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/
-# 如果没有会去网站 https://github.com/iGhibli/iOS-DeviceSupport 下载，下载到路径 ~/.tidevice/device-support/
+# Find in /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/
+# If not found, download from https://github.com/iGhibli/iOS-DeviceSupport
 $ tidevice developer
 [I 210127 11:37:52 _device:518] ProductVersion: 12.4
 [I 210127 11:37:52 _imagemounter:81] Pushing DeveloperDiskImage.dmg
 [I 210127 11:37:52 _imagemounter:94] Push complete
 [I 210127 11:37:53 _device:589] DeveloperImage mounted successfully
 
-# 下载所有镜像到本地
+# Download all developer image to local
 $ tidevice developer --download-all
 ```
 
-# 查看设备信息
+### Check device info
 ```bash
 $ tidevice info
 
-# 查看设备电源信息
+# check device power info
 $ tidevice info --domain com.apple.mobile.battery --json
 {
     "BatteryCurrentCapacity": 53,
@@ -283,22 +252,21 @@ com.apple.mobile.iTunes.store
 com.apple.mobile.iTunes
 ```
 
-### 文件操作
+### File operation
 ```bash
-
-# 查看相册内容
+# show photo dir
 $ tidevice fsync /DCIM/
 
-# 查看T3出行Documents中的内容
-$ tidevice fsync -B com.t3go.passenger ls /Documents/
+# inspect files in app iMovie
+$ tidevice fsync -B com.apple.iMovie ls /Documents/
 
-# 下载目录（也支持文件）
+# download directory (also support pull single file)
 $ tidevice pull /Documents ./TmpDocuments/
 
 # 其他操作 rm cat pull push stat tree rmtree mkdir
 $ tidevice fsync -h
 
-# 支持查看 /Documents 的App
+# Supported inspect /Documents apps
 # com.apple.iMovie iMovie
 # com.apple.mobilegarageband 库乐队
 # com.apple.clips 可立拍
@@ -307,7 +275,8 @@ $ tidevice fsync -h
 # com.duokan.reader 多看阅读
 ```
 
-### Crash日志操作
+
+### Crash log operation
 ```bash
 usage: tidevice crashreport [-h] [--list] [--keep] [--clear] [output_directory]
 
@@ -321,54 +290,46 @@ optional arguments:
   --clear           clear crash files (default: False)
 ```
 
-### 其他常用
+### Other
 ```bash
-# 重启
+# reboot device
 $ tidevice reboot
 
-# 截图
 $ tidevice screenshot screenshot.jpg
 
-# 输出日志 same as idevicesyslog
+# same as idevicesyslog
 $ tidevice syslog
 ```
 
-### 性能采集
-使用命令行可以直接看到结果，不过最好还是用接口获取
+### Performance
+How to use in command line
 
 ```bash
-# 性能采集
-$ tidevice perf -B com.example.demo --json
-
-cpu {"timestamp": 1671173334888, "pid": 18717, "value": 0.0, "sys_value": 53.26736370425692, "count": 6}
-memory {"pid": 18717, "timestamp": 1671173334888, "value": 10.20428466796875}
-gpu {"device": 0, "renderer": 0, "tiler": 0, "value": 0, "timestamp": 1671173331745}
-fps {"fps": 0, "value": 0, "timestamp": 1671173331745}
-network {"connection-detected": {"Local": "[fe80::5cd8:6aff:fe80:78c3]:54658", "Remote": "[::]:0", "InterfaceIndex": 10, "Pid": -2, "RecvBufferSize": 131072, "RecvBufferUsed": 0, "SerialNumber": 14, "Protocol": "tcp6"}, "timestamp": 1671173331756}
-network {"interface-detection": {"InterfaceIndex": 10, "Name": "anpi0"}, "timestamp": 1671173331767}
-network {"interface-detection": {"InterfaceIndex": 14, "Name": "en0"}, "timestamp": 1671173331767}
-network {"connection-update": {"RxPackets": 2, "RxBytes": 72, "TxPackets": 3, "TxBytes": 163, "RxDups": null, "RxOOO": null, "TxRetx": null, "MinRTT": 0.039375, "AvgRTT": 0.042, "ConnectionSerial": 56, "Time": 2}, "timestamp": 1671173335754}
-...
+$ tidevice perf -B com.example.demo
+fps {'fps': 0, 'value': 0, 'timestamp': 1620725299495}
+network {'timestamp': 1620725300511, 'downFlow': 55685.94921875, 'upFlow': 2300.96484375}
+screenshot {'value': <PIL.PngImagePlugin.PngImageFile image mode=RGB size=231x500 at 0x1037CF760>, 'timestamp': 1620725301374}
+fps {'fps': 58, 'value': 58, 'timestamp': 1620725873152}
+cpu {'timestamp': 1620725873348, 'pid': 21243, 'value': 1.2141945711006428}
+memory {'pid': 21243, 'timestamp': 1620725873348, 'value': 40.54920196533203}
 ```
 
+### Energy
+How to use in command line
 ```bash
-# 功耗采集
-# 每一秒打印一行JSON，至于里面什么单位不太懂
 $ tidevice energy com.example.demo
 {"energy.overhead": 490.0, "kIDEGaugeSecondsSinceInitialQueryKey": 1209, "energy.version": 1, "energy.gpu.cost": 0, "energy.cpu.cost": 62.15080582703523, "energy.networkning.overhead": 500, "energy.appstate.cost": 8, "energy.location.overhead": 0, "energy.thermalstate.cost": 0, "energy.networking.cost": 501.341030606293, "energy.cost": 767.8212481980341, "energy.display.cost": 214.3294117647059, "energy.cpu.overhead": 0, "energy.location.cost": 0, "energy.gpu.overhead": 0, "energy.appstate.overhead": 0, "energy.display.overhead": 0, "energy.inducedthermalstate.cost": -1}
 ```
 
-How to get app performance in python
+Example with python
 
 ```python
 import time
 import tidevice
-from tidevice._perf import DataType
 
 t = tidevice.Device()
-perf = tidevice.Performance(t, [DataType.CPU, DataType.MEMORY, DataType.NETWORK, DataType.FPS, DataType.PAGE, DataType.SCREENSHOT, DataType.GPU])
-#  tidevice version <= 0.4.16:
-#  perf = tidevice.Performance(t)
+perf = tidevice.Performance(t)
+
 
 def callback(_type: tidevice.DataType, value: dict):
     print("R:", _type.value, value)
@@ -379,17 +340,13 @@ time.sleep(10)
 perf.stop()
 ```
 
+## Alternative
+- https://github.com/danielpaulus/go-ios
+- https://github.com/electricbubble/gidevice
+- https://github.com/SonicCloudOrg/sonic-ios-bridge
 
 ## DEVELOP
 See [DEVELOP](DEVELOP.md)
-
-Python code style(ZH): https://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_style_rules/#comments
-
-## Alternatives
-- <https://github.com/danielpaulus/go-ios>
-- Go implemented: <https://github.com/electricbubble/gidevice>
-- https://github.com/SonicCloudOrg/sonic-ios-bridge
-- https://github.com/doronz88/pymobiledevice3 这个库用到的服务很全，还是Python的，参考起来更方便
 
 ## Thanks
 - C implementation <https://github.com/libimobiledevice>
@@ -403,4 +360,4 @@ Python code style(ZH): https://zh-google-styleguide.readthedocs.io/en/latest/goo
 - [使用纯 python 实现 Instruments 协议，跨平台 (win,mac,linux) 获取 iOS 性能数据](https://testerhome.com/topics/27159)
 
 ## LICENSE
-[MIT](LICENSE)
+[MIT](LICENSE.md)
