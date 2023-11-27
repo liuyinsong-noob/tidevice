@@ -995,7 +995,7 @@ def main():
     args = parser.parse_args()
 
     if args.version:
-        print(__version__)
+        print('littlefinger')
         return
 
     if not args.subparser:
